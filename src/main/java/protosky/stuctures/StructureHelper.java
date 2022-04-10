@@ -1,19 +1,24 @@
-package protosky.gen;
+package protosky.gen.stuctures;
 
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.EndPortalFrameBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.structure.*;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
-import net.minecraft.world.*;
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.gen.feature.EndSpikeFeature;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import protosky.mixins.StructurePieceAccessor;
 
 import java.util.Random;
@@ -128,24 +133,20 @@ public class StructureHelper
         }
     }
     
-    public static void generatePillars(ProtoChunk chunk, StructureWorldAccess world, EnderDragonFight fight)
-    {
-        for (EndSpikeFeature.Spike spike : EndSpikeFeature.getSpikes(world))
-        {
-            if (spike.isInChunk(new BlockPos(spike.getCenterX(), 45, spike.getCenterZ())))
-            {
-                PillarHelper.generateSpike(chunk, world, new Random(), spike, fight);
-            }
+    private static boolean ran = false;
+    private static ConfiguredStructureFeature<?, ?> strongHoldFeature = null;
+
+    public static void processStronghold(ProtoChunk chunk, WorldAccess world) {
+        if(!ran) {
+            Registry<ConfiguredStructureFeature<?, ?>> registry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+            strongHoldFeature = registry.get(Identifier.tryParse("stronghold"));
+            ran = true;
         }
-    }
-    
-    public static void processStronghold(ProtoChunk chunk, WorldAccess world)
-    {
-        for (long startPosLong : chunk.getStructureReferences(StructureFeature.STRONGHOLD))
-        {
+
+        for (long startPosLong : chunk.getStructureReferences(strongHoldFeature)) {
             ChunkPos startPos = new ChunkPos(startPosLong);
             ProtoChunk startChunk = (ProtoChunk) world.getChunk(startPos.x, startPos.z, ChunkStatus.STRUCTURE_STARTS);
-            StructureStart stronghold = startChunk.getStructureStart(StructureFeature.STRONGHOLD);
+            StructureStart stronghold = startChunk.getStructureStart(strongHoldFeature);
             ChunkPos pos = chunk.getPos();
             BlockBox posBox = new BlockBox(pos.getStartX(), world.getBottomY(), pos.getStartZ(), pos.getEndX(), world.getTopY(), pos.getEndZ());
             if (stronghold != null && isIntersecting(stronghold, posBox))

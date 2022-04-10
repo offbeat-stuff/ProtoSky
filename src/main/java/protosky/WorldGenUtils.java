@@ -12,15 +12,20 @@ import net.minecraft.util.collection.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.ProtoChunk;
+import protosky.gen.stuctures.PillarHelper;
+import protosky.gen.stuctures.StructureHelper;
 import protosky.mixins.ProtoChunkAccessor;
 
 import java.util.*;
+
+import static protosky.ProtoSkySettings.LOGGER;
 
 public class WorldGenUtils
 {
@@ -30,7 +35,7 @@ public class WorldGenUtils
         for (int i = 0; i < sections.length; i++) {
             ChunkSection chunkSection = sections[i];
             PalettedContainer<BlockState> blockStateContainer = new PalettedContainer<>(Block.STATE_IDS, Blocks.AIR.getDefaultState(), PalettedContainer.PaletteProvider.BLOCK_STATE);
-            PalettedContainer<Biome> biomeContainer = chunkSection.getBiomeContainer();
+            PalettedContainer<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
             int chunkPos = chunkSection.getYOffset() >> 4;
             sections[i] = new ChunkSection(chunkPos, blockStateContainer, biomeContainer);
         }
@@ -46,25 +51,22 @@ public class WorldGenUtils
         {
             heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
         }
-        StructureHelper.processStronghold(chunk, world);
 
-        if (world.getRegistryKey() == World.END)
-            StructureHelper.generatePillars(chunk, world, world.getEnderDragonFight());
+        if (world.getRegistryKey() == World.OVERWORLD) StructureHelper.processStronghold(chunk, world);
+
+        if (world.getRegistryKey() == World.END) PillarHelper.generate(world, chunk);
     }
 
 
-    public static void clearEntities(ProtoChunk chunk, ServerWorldAccess world)
-    {
+    public static void clearEntities(ProtoChunk chunk, ServerWorld world) {
         // erase entities
-        if (world.toServerWorld().getRegistryKey() != World.END)
-        {
+        if (!(world.getRegistryKey() == World.END)) {
             chunk.getEntities().clear();
-        }
-        else
-        {
-            chunk.getEntities().removeIf(tag ->
-            {
+        } else {
+            chunk.getEntities().removeIf(tag -> {
                 String id = tag.getString("id");
+                LOGGER.info(id);
+                //FIX: These aren't spawning
                 return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker") && !id.equals("minecraft:item_frame");
             });
         }
