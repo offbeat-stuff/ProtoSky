@@ -1,4 +1,4 @@
-package protosky.mixins.endCityParts;
+package protosky.mixins.endCityParts.old_Unused;
 
 import net.minecraft.structure.SimpleStructurePiece;
 import net.minecraft.structure.StructurePlacementData;

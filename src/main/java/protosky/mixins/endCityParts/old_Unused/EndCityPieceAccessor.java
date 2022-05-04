@@ -1,4 +1,4 @@
-package protosky.mixins.endCityParts;
+package protosky.mixins.endCityParts.old_Unused;
 
 import net.minecraft.structure.EndCityGenerator;
 import net.minecraft.structure.StructurePlacementData;

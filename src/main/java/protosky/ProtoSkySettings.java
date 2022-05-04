@@ -1,6 +1,8 @@
 package protosky;
 
-public class ProtoSkySettings
-{
-    public static boolean endPortalFix = true;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ProtoSkySettings {
+    public static final Logger LOGGER = LoggerFactory.getLogger("ProtoSky");
 }

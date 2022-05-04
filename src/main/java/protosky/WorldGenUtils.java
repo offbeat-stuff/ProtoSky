@@ -1,4 +1,4 @@
-package protosky.gen;
+package protosky;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -19,8 +19,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.ProtoChunk;
-import protosky.gen.stuctures.PillarHelper;
-import protosky.gen.stuctures.StructureHelper;
+import protosky.stuctures.PillarHelper;
+import protosky.stuctures.StructureHelper;
 import protosky.mixins.ProtoChunkAccessor;
 
 import java.util.*;
@@ -39,11 +39,13 @@ public class WorldGenUtils
             int chunkPos = chunkSection.getYOffset() >> 4;
             sections[i] = new ChunkSection(chunkPos, blockStateContainer, biomeContainer);
         }
-        for (BlockPos bePos : chunk.getBlockEntityPositions())
-        {
+        for (BlockPos bePos : chunk.getBlockEntityPositions()) {
             chunk.removeBlockEntity(bePos);
         }
         ((ProtoChunkAccessor) chunk).getLightSources().clear();
+    }
+
+    public static void genHeightMaps(ProtoChunk chunk) {
         // defined in Heightmap class constructor
         int elementBits = MathHelper.ceilLog2(chunk.getHeight() + 1);
         long[] emptyHeightmap = new PackedIntegerArray(elementBits, 256).getData();
@@ -51,10 +53,6 @@ public class WorldGenUtils
         {
             heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
         }
-
-        if (world.getRegistryKey() == World.OVERWORLD) StructureHelper.processStronghold(chunk, world);
-
-        if (world.getRegistryKey() == World.END) PillarHelper.generate(world, chunk);
     }
 
 
@@ -66,7 +64,6 @@ public class WorldGenUtils
             chunk.getEntities().removeIf(tag -> {
                 String id = tag.getString("id");
                 LOGGER.info(id);
-                //FIX: These aren't spawning
                 return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker") && !id.equals("minecraft:item_frame");
             });
         }
