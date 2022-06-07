@@ -66,25 +66,14 @@ public abstract class ChunkStatusMixin {
                     WorldGenUtils.genSpawnPlatform(chunk, world);
                 }*/
             //}
-            /*int x = 0;
-            int y = 0;
-            while (x <= 15) {
-                while (y <= 15) {
-                    ProtoSkySettings.LOGGER.info("ran" + x);
-                    chunk.setBlockState(new BlockPos(x, 256, y), Blocks.IRON_BLOCK.getDefaultState(), false);
-                    //chunk.setBlockState(new BlockPos(x, 256, y), Blocks.AIR.getDefaultState(), false);
-                    y++;
-                }
-                x++;
-            }*/
 
             int count = 0;
             while (count <= 255) {
                 int x = count / 16;
                 int y = count % 16;
                 //chunk.setBlockState(new BlockPos(count / 16, 256, count % 16), Blocks.IRON_BLOCK.getDefaultState(), false);
-                chunk.setBlockState(new BlockPos(x, 256, y), Blocks.IRON_BLOCK.getDefaultState(), false);
-                chunk.setBlockState(new BlockPos(x, 256, y), Blocks.AIR.getDefaultState(), false);
+                chunk.setBlockState(new BlockPos(x, 319, y), Blocks.IRON_BLOCK.getDefaultState(), false);
+                chunk.setBlockState(new BlockPos(x, 319, y), Blocks.AIR.getDefaultState(), false);
                 count++;
             }
 
