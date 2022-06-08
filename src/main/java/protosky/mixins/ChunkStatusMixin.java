@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerLightingProvider;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
@@ -34,7 +34,7 @@ public abstract class ChunkStatusMixin {
     @Inject(method = "method_20613", at = @At("HEAD"), cancellable = true)
     //This is under ChunkStatus FEATURES. To find the inject method you need to read the bytecode.
     //This is where blocks structures should get placed, now it's where the structures ProtoSky needs get placed.
-    private static void FEATURES(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureManager structureManager, ServerLightingProvider lightingProvider, Function function, List<Chunk> chunks, Chunk chunk, boolean bl, CallbackInfoReturnable<CompletableFuture> cir) {
+    private static void FEATURES(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureTemplateManager structureManager, ServerLightingProvider lightingProvider, Function function, List<Chunk> chunks, Chunk chunk, boolean bl, CallbackInfoReturnable<CompletableFuture> cir) {
         if (!chunk.getStatus().isAtLeast(targetStatus)) {
             Heightmap.populateHeightmaps(chunk, EnumSet.of(Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE));
 
@@ -95,7 +95,7 @@ public abstract class ChunkStatusMixin {
     }
     @Inject(method = "method_20613", at = @At("HEAD"), cancellable = true)
     //This is under ChunkStatus NOISE. To find the inject method you need to read the bytecode.
-    private static void NOISE(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureManager structureManager, ServerLightingProvider lightingProvider, Function function, List chunks, Chunk chunk, boolean bl, CallbackInfoReturnable<CompletableFuture> cir) {
+    private static void NOISE(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureTemplateManager structureManager, ServerLightingProvider lightingProvider, Function function, List chunks, Chunk chunk, boolean bl, CallbackInfoReturnable<CompletableFuture> cir) {
         if (!bl && chunk.getStatus().isAtLeast(targetStatus)) {
             cir.setReturnValue(CompletableFuture.completedFuture(Either.left(chunk)));
         } else {

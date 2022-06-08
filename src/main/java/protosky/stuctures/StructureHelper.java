@@ -1,9 +1,5 @@
 package protosky.stuctures;
 
-import it.unimi.dsi.fastutil.ints.IntArraySet;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import net.minecraft.SharedConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,36 +9,20 @@ import net.minecraft.structure.*;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.math.*;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryEntryList;
-import net.minecraft.world.*;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeSource;
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.FlatChunkGenerator;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
-import net.minecraft.world.gen.feature.PlacedFeature;
-import net.minecraft.world.gen.random.ChunkRandom;
-import net.minecraft.world.gen.random.RandomSeed;
-import net.minecraft.world.gen.random.Xoroshiro128PlusPlusRandom;
 import protosky.mixins.StructurePieceAccessor;
-import protosky.mixins.endCityParts.ChunkGeneratorMixin;
 
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 public class StructureHelper {
-    public static void genStructures(ProtoChunk protoChunk, ServerWorld world, StructureManager structureManager, ChunkGenerator generator) {
+    public static void genStructures(ProtoChunk protoChunk, ServerWorld world, StructureTemplateManager structureManager, ChunkGenerator generator) {
         if (world.getRegistryKey() == World.OVERWORLD) StrongHoldHelper.processStronghold(world, protoChunk);
         if (world.getRegistryKey() == World.END) PillarHelper.generate(world, protoChunk);
     }

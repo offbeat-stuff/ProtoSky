@@ -1,5 +1,8 @@
 package protosky.stuctures;
 
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashException;
@@ -7,18 +10,25 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.random.ChunkRandom;
+import net.minecraft.util.math.random.RandomSeed;
+import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
-import net.minecraft.world.gen.random.ChunkRandom;
-import net.minecraft.world.gen.random.RandomSeed;
-import net.minecraft.world.gen.random.Xoroshiro128PlusPlusRandom;
+import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.util.PlacedFeatureIndexer;
+import net.minecraft.world.gen.structure.Structure;
 import protosky.mixins.endCityParts.ChunkGeneratorMixin;
 
 import java.util.*;
@@ -27,16 +37,72 @@ import java.util.stream.Collectors;
 
 public class endCityHelper {
     private static boolean ran = false;
-    private static ConfiguredStructureFeature<?, ?> endCityFeature = null;
+    private static Structure endCityFeature = null;
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
         if (!ran) {
-            endCityFeature = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).get(Identifier.tryParse("end_city"));
+            endCityFeature = world.getRegistryManager().get(Registry.STRUCTURE_KEY).get(Identifier.tryParse("end_city"));
             ran = true;
         }
     }
 
     public static void generateEndCities(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor, ChunkGenerator generator) {
+        ChunkPos chunkPos = chunk.getPos();
+        //Check if we should generate features
+        if (!SharedConstants.method_37896(chunkPos)) {
+            //Find where to generate
+            ChunkSectionPos chunkSectionPos = ChunkSectionPos.from(chunkPos, world.getBottomSectionCoord());
+            BlockPos blockPos = chunkSectionPos.getMinPos();
+
+            //Get the structure registry
+            Registry<Structure> registry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            Map<Integer, List<Structure>> map = registry.stream()
+                    .collect(Collectors.groupingBy(structureType -> structureType.getFeatureGenerationStep().ordinal()));
+
+            //Get the structure to place
+            List<PlacedFeatureIndexer.IndexedFeatures> list = ((ChunkGeneratorMixin) generator).getIndexedFeaturesListSupplier().get();
+
+            //Make a new random
+            ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(RandomSeed.getSeed()));
+            long l = chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
+
+            int i = list.size();
+
+            try {
+                Registry<PlacedFeature> registry2 = world.getRegistryManager().get(Registry.PLACED_FEATURE_KEY);
+                int j = Math.max(GenerationStep.Feature.values().length, i);
+
+                for(int k = 0; k < j; ++k) {
+                    int m = 0;
+                    if (structureAccessor.shouldGenerateStructures()) {
+                        for(Object structure : (List)map.getOrDefault(k, Collections.emptyList())) {
+                            chunkRandom.setDecoratorSeed(l, m, k);
+                            Supplier<String> supplier = () -> (String)registry.getKey((Structure) structure).map(Object::toString).orElseGet(structure::toString);
+
+                            try {
+                                world.setCurrentlyGeneratingStructureName(supplier);
+                                structureAccessor.getStructureStarts(chunkSectionPos, (Structure) structure)
+                                        .forEach(start -> start.place(world, structureAccessor, generator, chunkRandom, ((ChunkGeneratorMixin) generator).getBlockBoxForChunkInvoker(chunk), chunkPos));
+                            } catch (Exception var29) {
+                                CrashReport crashReport = CrashReport.create(var29, "Feature placement");
+                                crashReport.addElement("Feature").add("Description", supplier::get);
+                                throw new CrashException(crashReport);
+                            }
+
+                            ++m;
+                        }
+                    }
+                }
+
+                world.setCurrentlyGeneratingStructureName(null);
+            } catch (Exception var31) {
+                CrashReport crashReport3 = CrashReport.create(var31, "Biome decoration");
+                crashReport3.addElement("Generation").add("CenterX", chunkPos.x).add("CenterZ", chunkPos.z).add("Seed", l);
+                throw new CrashException(crashReport3);
+            }
+        }
+
+        /*
         //Position Stuff
         ChunkPos chunkPos = chunk.getPos();
         if (!SharedConstants.method_37896(chunkPos)) {
@@ -44,15 +110,15 @@ public class endCityHelper {
             BlockPos blockPos = chunkSectionPos.getMinPos();
 
             //Registry Stuff
-            Registry<ConfiguredStructureFeature<?, ?>> registry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
-            Map<Integer, List<ConfiguredStructureFeature<?, ?>>> map = registry.stream()
-                    .collect(Collectors.groupingBy(configuredStructureFeature -> configuredStructureFeature.feature.getGenerationStep().ordinal()));
+            Registry<Structure> registry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            Map<Integer, List<Structure>> map = registry.stream()
+                    .collect(Collectors.groupingBy(structureType -> structureType.getFeatureGenerationStep().ordinal()));
 
-            BiomeSource populationSource = ((ChunkGeneratorMixin) generator).getPopulationSource();
-
-            List<BiomeSource.IndexedFeatures> list = populationSource.getIndexedFeatures();
+            List<PlacedFeatureIndexer.IndexedFeatures> list = ((ChunkGeneratorMixin) generator).getIndexedFeaturesListSupplier().get();
             ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(RandomSeed.getSeed()));
             long l = chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
+
+
             int i = list.size();
 
             fixRaceCondition(world);
@@ -74,7 +140,7 @@ public class endCityHelper {
                                 structureAccessor.getStructureStarts(chunkSectionPos, configuredStructureFeature)
                                         .forEach(
                                                 structureStart -> {
-                                                    if (structureStart.getFeature().equals(endCityFeature)) {
+                                                    if (structureStart.getStructure().equals(endCityFeature)) {
                                                         structureStart.place(
                                                                 world, structureAccessor, generator, chunkRandom, ((ChunkGeneratorMixin) generator).getBlockBoxForChunkInvoker(chunk), chunkPos
                                                         );
@@ -98,7 +164,7 @@ public class endCityHelper {
                 crashReport3.addElement("Generation").add("CenterX", chunkPos.x).add("CenterZ", chunkPos.z).add("Seed", l);
                 throw new CrashException(crashReport3);
             }
-        }
+        }*/
     }
 
     //

@@ -12,7 +12,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Random;
 
@@ -53,11 +53,11 @@ public class StrongHoldHelper {
     }
 
     private static boolean ran = false;
-    private static ConfiguredStructureFeature<?, ?> strongHoldFeature = null;
+    private static Structure strongHoldFeature = null;
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
         if(!ran) {
-            strongHoldFeature = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).get(Identifier.tryParse("stronghold"));
+            strongHoldFeature = world.getRegistryManager().get(Registry.STRUCTURE_KEY).get(Identifier.tryParse("stronghold"));
             ran = true;
         }
     }

@@ -3,15 +3,18 @@ package protosky;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.class_7522;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.Structure;
-import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.structure.StructureTemplate;
+import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.RandomSeed;
+import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
@@ -35,7 +38,7 @@ public class WorldGenUtils
         for (int i = 0; i < sections.length; i++) {
             ChunkSection chunkSection = sections[i];
             PalettedContainer<BlockState> blockStateContainer = new PalettedContainer<>(Block.STATE_IDS, Blocks.AIR.getDefaultState(), PalettedContainer.PaletteProvider.BLOCK_STATE);
-            PalettedContainer<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
+            class_7522<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
             int chunkPos = chunkSection.getYOffset() >> 4;
             sections[i] = new ChunkSection(chunkPos, blockStateContainer, biomeContainer);
         }
@@ -70,17 +73,17 @@ public class WorldGenUtils
     }
 
     public static void genSpawnPlatform(Chunk chunk, ServerWorld world) {
-        StructureManager man = world.getStructureManager();
-        Structure s = null;
+        StructureTemplateManager man = world.getStructureTemplateManager();
+        StructureTemplate s = null;
 
         // Get structure for this dimension
         if (world.getRegistryKey() == World.OVERWORLD) {
-            Optional<Structure> op = man.getStructure(new Identifier("protosky:spawn_overworld"));
+            Optional<StructureTemplate> op = man.getTemplate(new Identifier("protosky:spawn_overworld"));
             if (op.isPresent()) {
                 s = op.get();
             }
         } else if (world.getRegistryKey() == World.NETHER) {
-            Optional<Structure> op = man.getStructure(new Identifier("protosky:spawn_nether"));
+            Optional<StructureTemplate> op = man.getTemplate(new Identifier("protosky:spawn_nether"));
             if (op.isPresent()) {
                 s = op.get();
             }
@@ -91,9 +94,9 @@ public class WorldGenUtils
         BlockPos blockPos = new BlockPos(chunkPos.x * 16, 64, chunkPos.z * 16);
 
         StructurePlacementData structurePlacementData = new StructurePlacementData().setUpdateNeighbors(true);
-        Random random = new Random();
+
         int flags = 0;
-        s.place(world, blockPos, blockPos, structurePlacementData, random, flags);
+        s.place(world, blockPos, blockPos, structurePlacementData, new Xoroshiro128PlusPlusRandom(RandomSeed.getSeed()), flags);
         world.setSpawnPos(blockPos.add(s.getSize().getX() / 2, s.getSize().getY() + 1, s.getSize().getZ() / 2), 0);
     }
 }
