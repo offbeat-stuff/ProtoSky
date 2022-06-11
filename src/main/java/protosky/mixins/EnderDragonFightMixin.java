@@ -3,6 +3,7 @@ package protosky.mixins;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.util.math.BlockPos;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,10 +18,13 @@ public class EnderDragonFightMixin
     @Shadow
     private BlockPos exitPortalLocation;
 
-    @Shadow @Final private BlockPattern endPortalPattern;
 
-    @Inject(method = "generateEndPortal(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/EndPortalFeature;generateIfValid(Lnet/minecraft/world/gen/feature/FeatureConfig;Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", shift = At.Shift.BEFORE))
+    @Shadow @Final private static Logger LOGGER;
+
+    @Inject(method = "generateEndPortal(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/EndPortalFeature;generateIfValid(Lnet/minecraft/world/gen/feature/FeatureConfig;Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/util/math/random/Random;Lnet/minecraft/util/math/BlockPos;)Z", shift = At.Shift.BEFORE))
+    //@Inject(method = "generateEndPortal(Z)V", at = @At("HEAD"))
     private void adjustExitPortalLocation(boolean open, CallbackInfo ci) {
+        LOGGER.info("ran");
         //if (this.exitPortalLocation.getY() < 2)
         //exitPortalLocation = exitPortalLocation.up(2 - exitPortalLocation.getY());
         //exitPortalLocation = new BlockPos(exitPortalLocation.getX(), 2, exitPortalLocation.getZ());

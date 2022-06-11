@@ -232,7 +232,7 @@ public class endCityHelper {
                         if(structureOptional.isPresent()) {
                             //BlockIgnoreStructureProcessor blockIgnoreStructureProcessor = BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS;
                             //StructurePlacementData placementData = new StructurePlacementData().setBoundingBox(chunkBoundingBox).setIgnoreEntities(false).setPlaceFluids(true).setMirror(piece.getMirror()).setInitializeMobs(false).setPosition(new BlockPos(0,0,0)).setUpdateNeighbors(false).addProcessor(blockIgnoreStructureProcessor);
-                            //TEST: Is this the cause of the non-reproducibility?
+                            //TeST: Is this the cause of the non-reproducibility?
                             //      Maybe only run once and see the results
                             //      Maybe it's from trying to place entities?
                             
@@ -242,7 +242,7 @@ public class endCityHelper {
 
                             //Get the bounding box in two blockPoses
                             Pair<BlockPos, BlockPos> pieceBlockPosBoundBox = getEdges(piece.getBoundingBox());
-                            if(structureOptional.get().place((ServerWorldAccess) world, *//*Start of piece*//*TEST: Does replacing my bounding box system with the real ones from the piece do anything?
+                            if(structureOptional.get().place((ServerWorldAccess) world, *//*Start of piece*//*TeST: Does replacing my bounding box system with the real ones from the piece do anything?
                                                                                                                 Maybe these are chunk not structure and maybe the first part places because it's by chance in our chunk?
                                                                                                                 *//* pieceBlockPosBoundBox.getLeft(), /*End of piece*//* pieceBlockPosBoundBox.getRight(), placementData, new Random(), 2)) {
                                 LOGGER.info(structureOptional.get().getInfosForBlock(pieceBlockPosBoundBox.getLeft(), placementData, Blocks.STRUCTURE_BLOCK).toString());

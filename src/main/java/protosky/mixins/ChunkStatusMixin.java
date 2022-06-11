@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import protosky.ProtoSkySettings;
 import protosky.WorldGenUtils;
 import protosky.stuctures.StructureHelper;
 import protosky.stuctures.endCityHelper;
@@ -35,6 +34,8 @@ public abstract class ChunkStatusMixin {
     //This is under ChunkStatus FEATURES. To find the inject method you need to read the bytecode.
     //This is where blocks structures should get placed, now it's where the structures ProtoSky needs get placed.
     private static void FEATURES(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureTemplateManager structureManager, ServerLightingProvider lightingProvider, Function function, List<Chunk> chunks, Chunk chunk, boolean bl, CallbackInfoReturnable<CompletableFuture> cir) {
+        //protosky.ProtoSkySettings.LOGGER.info("ran");
+        //System.out.println("test");
         if (!chunk.getStatus().isAtLeast(targetStatus)) {
             Heightmap.populateHeightmaps(chunk, EnumSet.of(Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE));
 

@@ -21,5 +21,5 @@ public interface ChunkGeneratorMixin {
     Supplier<List<PlacedFeatureIndexer.IndexedFeatures>> getIndexedFeaturesListSupplier();
 
     @Invoker("getBlockBoxForChunk")
-    public BlockBox getBlockBoxForChunkInvoker(Chunk chunk);
+    BlockBox getBlockBoxForChunkInvoker(Chunk chunk);
 }
