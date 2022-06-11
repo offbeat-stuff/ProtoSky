@@ -33,9 +33,11 @@ bin/
 
 # fabric
 
+run/fabric-server-launcher.properties
 run/
 
 edit.txt
 src.zip
 notes.txt
 resetEndSpawn.sh
+startServer.sh
