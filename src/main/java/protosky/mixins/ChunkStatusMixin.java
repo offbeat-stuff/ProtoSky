@@ -68,17 +68,8 @@ public abstract class ChunkStatusMixin {
                 }*/
             //}
 
-            int count = 0;
-            while (count <= 255) {
-                int x = count / 16;
-                int y = count % 16;
-                //chunk.setBlockState(new BlockPos(count / 16, 256, count % 16), Blocks.IRON_BLOCK.getDefaultState(), false);
-                chunk.setBlockState(new BlockPos(x, 319, y), Blocks.IRON_BLOCK.getDefaultState(), false);
-                chunk.setBlockState(new BlockPos(x, 319, y), Blocks.AIR.getDefaultState(), false);
-                count++;
-            }
-
             Heightmap.populateHeightmaps(chunk, EnumSet.of(Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE));
+            WorldGenUtils.genHeightMaps((ProtoChunk) chunk);
 
             protoChunk.setStatus(targetStatus);
         }

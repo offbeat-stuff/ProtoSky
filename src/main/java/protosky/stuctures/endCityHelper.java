@@ -82,7 +82,11 @@ public class endCityHelper {
                             try {
                                 world.setCurrentlyGeneratingStructureName(supplier);
                                 structureAccessor.getStructureStarts(chunkSectionPos, (Structure) structure)
-                                        .forEach(start -> start.place(world, structureAccessor, generator, chunkRandom, ((ChunkGeneratorMixin) generator).getBlockBoxForChunkInvoker(chunk), chunkPos));
+                                        .forEach(start -> {
+                                            if (start.getStructure().equals(endCityFeature)) {
+                                                start.place(world, structureAccessor, generator, chunkRandom, ((ChunkGeneratorMixin) generator).getBlockBoxForChunkInvoker(chunk), chunkPos);
+                                            }
+                                        });
                             } catch (Exception var29) {
                                 CrashReport crashReport = CrashReport.create(var29, "Feature placement");
                                 crashReport.addElement("Feature").add("Description", supplier::get);
