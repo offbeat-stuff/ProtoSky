@@ -31,7 +31,7 @@ public class StrongHoldHelper {
         return false;
     }*/
 
-    public static void genEndPortal(ProtoChunk chunk, StrongholdGenerator.PortalRoom room, Random random)
+    public static void genEndPortal(ProtoChunk chunk, StrongholdGenerator.PortalRoom room)
     {
         BlockState northFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.NORTH);
         BlockState southFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.SOUTH);
@@ -80,7 +80,7 @@ public class StrongHoldHelper {
                     if (((StructurePiece)piece).getBoundingBox().intersectsXZ(pos.getStartX(), pos.getStartZ(), pos.getEndX(), pos.getEndZ()))
                     {
                         if (piece instanceof StrongholdGenerator.PortalRoom)
-                            genEndPortal(chunk, (StrongholdGenerator.PortalRoom) piece, new Random(startPosLong));
+                            genEndPortal(chunk, (StrongholdGenerator.PortalRoom) piece);
                     }
                 }
             }

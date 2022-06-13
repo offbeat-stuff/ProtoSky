@@ -8,6 +8,7 @@ import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ProtoChunk;
@@ -43,7 +44,7 @@ public abstract class ChunkStatusMixin {
             protoChunk.setLightingProvider(lightingProvider);
 
             ChunkRegion chunkRegion = new ChunkRegion(world, chunks, targetStatus, 1);
-            /*if(world.getDimension().hasEnderDragonFight()) {
+            /*if(world.getRegistryKey() == World.END) {
                 generator.generateFeatures(chunkRegion, chunk, world.getStructureAccessor().forRegion(chunkRegion));
                 Blender.tickLeavesAndFluids(chunkRegion, chunk);
             } else {*/
@@ -59,6 +60,8 @@ public abstract class ChunkStatusMixin {
                 //Generate the structures I could figure out how to generate.
                 StructureHelper.genStructures((ProtoChunk) chunk, world, structureManager, generator);
 
+                WorldGenUtils.genHeightMaps((ProtoChunk) chunk);
+
                 //This isn't needed as we never generate structures that would have entities.
                 //WorldGenUtils.clearEntities((ProtoChunk)chunk, world);
 
@@ -66,11 +69,10 @@ public abstract class ChunkStatusMixin {
                 /*if (new ChunkPos(world.getSpawnPos()).equals(chunk.getPos())) {
                     WorldGenUtils.genSpawnPlatform(chunk, world);
                 }*/
+
             //}
 
             Heightmap.populateHeightmaps(chunk, EnumSet.of(Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE));
-            WorldGenUtils.genHeightMaps((ProtoChunk) chunk);
-
             protoChunk.setStatus(targetStatus);
         }
 

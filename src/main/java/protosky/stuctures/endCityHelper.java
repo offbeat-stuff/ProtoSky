@@ -30,10 +30,12 @@ import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.util.PlacedFeatureIndexer;
 import net.minecraft.world.gen.structure.Structure;
 import protosky.mixins.endCityParts.ChunkGeneratorMixin;
+import static protosky.ProtoSkySettings.*;
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 
 public class endCityHelper {
     private static boolean ran = false;
@@ -68,6 +70,8 @@ public class endCityHelper {
 
             int i = list.size();
 
+            fixRaceCondition(world);
+
             try {
                 Registry<PlacedFeature> registry2 = world.getRegistryManager().get(Registry.PLACED_FEATURE_KEY);
                 int j = Math.max(GenerationStep.Feature.values().length, i);
@@ -83,7 +87,10 @@ public class endCityHelper {
                                 world.setCurrentlyGeneratingStructureName(supplier);
                                 structureAccessor.getStructureStarts(chunkSectionPos, (Structure) structure)
                                         .forEach(start -> {
+                                            //endCityFeature.toString()
+                                            //System.out.println("get" + endCityFeature.toString());
                                             if (start.getStructure().equals(endCityFeature)) {
+                                            //System.out.println(start.getStructure().toString());
                                                 start.place(world, structureAccessor, generator, chunkRandom, ((ChunkGeneratorMixin) generator).getBlockBoxForChunkInvoker(chunk), chunkPos);
                                             }
                                         });
