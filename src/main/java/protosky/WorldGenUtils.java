@@ -3,7 +3,6 @@ package protosky;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_7522;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
@@ -22,6 +21,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.ProtoChunk;
+import net.minecraft.world.chunk.ReadableContainer;
 import protosky.stuctures.PillarHelper;
 import protosky.stuctures.StructureHelper;
 import protosky.mixins.ProtoChunkAccessor;
@@ -38,7 +38,7 @@ public class WorldGenUtils
         for (int i = 0; i < sections.length; i++) {
             ChunkSection chunkSection = sections[i];
             PalettedContainer<BlockState> blockStateContainer = new PalettedContainer<>(Block.STATE_IDS, Blocks.AIR.getDefaultState(), PalettedContainer.PaletteProvider.BLOCK_STATE);
-            class_7522<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
+            ReadableContainer<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
             int chunkPos = chunkSection.getYOffset() >> 4;
             sections[i] = new ChunkSection(chunkPos, blockStateContainer, biomeContainer);
         }

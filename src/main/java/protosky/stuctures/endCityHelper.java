@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 
 public class endCityHelper {
-    private static boolean ran = false;
+    public static boolean ran = false;
     private static Structure endCityFeature = null;
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
@@ -51,7 +51,7 @@ public class endCityHelper {
     public static void generateEndCities(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor, ChunkGenerator generator) {
         ChunkPos chunkPos = chunk.getPos();
         //Check if we should generate features
-        if (!SharedConstants.method_37896(chunkPos)) {
+        if (!SharedConstants.isOutsideGenerationArea(chunkPos)) {
             //Find where to generate
             ChunkSectionPos chunkSectionPos = ChunkSectionPos.from(chunkPos, world.getBottomSectionCoord());
             BlockPos blockPos = chunkSectionPos.getMinPos();

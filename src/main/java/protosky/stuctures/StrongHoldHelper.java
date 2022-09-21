@@ -52,7 +52,7 @@ public class StrongHoldHelper {
         setBlockInStructure(room, chunk, westFrame, 7, 3, 11);
     }
 
-    private static boolean ran = false;
+    public static boolean ran = false;
     private static Structure strongHoldFeature = null;
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
