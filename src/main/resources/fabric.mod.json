@@ -21,7 +21,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "protosky.testing.findMovedStructure"
+      "protosky.testing.findMovedStructure",
+      "protosky.fixWorldLoads"
     ]
   },
   "mixins": [
@@ -29,8 +30,14 @@
   ],
 
   "depends": {
+<<<<<<< HEAD
     "minecraft": ">=1.19",
     "fabricloader": ">=0.14.9",
+=======
+    "minecraft": ">=1.19.2",
+    "fabricloader": ">=0.14.9",
+    "fabric-api": "*",
+>>>>>>> 614677cf91ff00b787bbfd6850c9c7edb1e9c4aa
     "java": ">=17"
   }
 }
