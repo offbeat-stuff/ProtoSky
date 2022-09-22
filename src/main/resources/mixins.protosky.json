@@ -3,13 +3,21 @@
   "package": "protosky.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "endCityParts.ChunkGeneratorMixin",
+    "ChunkStatusMixin"
+  ],
+  "unused": [
     "ChunkStatusMixin",
     "EnderDragonFightMixin",
     "ProtoChunkAccessor",
     "StructurePieceAccessor",
-    "endCityParts.ChunkGeneratorMixin"
-  ],
-  "unused": [
+    "endCityParts.ChunkGeneratorMixin",
+
+    "testing.StructureStartMixin",
+    "testing.SwampHutGeneratorMixin",
+    "testing.ShiftableStructurePieceInvoker",
+    "testing.StructurePieceInvoker",
+
     "endCityParts.old_Unused.EndCityPieceAccessor",
     "endCityParts.old_Unused.SimpleStructurePieceAccessor"
   ],

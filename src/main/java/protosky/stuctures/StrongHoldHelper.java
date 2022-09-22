@@ -3,9 +3,10 @@ package protosky.stuctures;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
-import net.minecraft.structure.*;
+import net.minecraft.structure.StrongholdGenerator;
+import net.minecraft.structure.StructurePiece;
+import net.minecraft.structure.StructureStart;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -13,8 +14,6 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ProtoChunk;
 import net.minecraft.world.gen.structure.Structure;
-
-import java.util.Random;
 
 import static protosky.stuctures.StructureHelper.isIntersecting;
 import static protosky.stuctures.StructureHelper.setBlockInStructure;
