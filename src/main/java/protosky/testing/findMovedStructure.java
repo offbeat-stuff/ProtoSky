@@ -45,9 +45,6 @@ public class findMovedStructure implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        CommonLifecycleEvents.TAGS_LOADED.register((arg1, arg2) -> {
-
-        });
         ServerTickEvents.END_SERVER_TICK.register((server) -> {
             if(waitTime == 1) {
                 waitTime--;
@@ -91,7 +88,7 @@ public class findMovedStructure implements ModInitializer {
                     structureBoundingBoxLocations = new ArrayList[structuresList.size()];
                     globalPlayer = EntityArgumentType.getPlayer(context, "player");
 
-                     inWait = true;
+                    inWait = true;
                     waitTime = 40;
 
                     /*structureToFind = structuresList.get(0);

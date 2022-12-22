@@ -1,7 +1,5 @@
-package protosky.mixins.endCityParts;
+package protosky.mixins.StructureHelperInvokers;
 
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
@@ -19,7 +17,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Mixin(ChunkGenerator.class)
-public interface ChunkGeneratorMixin {
+public interface ChunkGeneratorInvoker {
 
     @Accessor("indexedFeaturesListSupplier")
     Supplier<List<PlacedFeatureIndexer.IndexedFeatures>> getIndexedFeaturesListSupplier();

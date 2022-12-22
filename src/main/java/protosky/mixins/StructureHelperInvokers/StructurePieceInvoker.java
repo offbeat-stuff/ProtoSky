@@ -1,4 +1,4 @@
-package protosky.mixins.testing;
+package protosky.mixins.StructureHelperInvokers;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.structure.StructurePiece;
@@ -19,9 +19,16 @@ public interface StructurePieceInvoker {
 
     @Invoker("addBlock")
     public void invokeAddBlock(StructureWorldAccess world, BlockState block, int x, int y, int z, BlockBox box);
+
     @Invoker("fillDownwards")
     public void invokeFillDownwards(StructureWorldAccess world, BlockState state, int x, int y, int z, BlockBox box);
 
     @Invoker("offsetPos")
     public BlockPos.Mutable invokeOffsetPos(int x, int y, int z);
+
+    @Accessor("boundingBox")
+    void setBoundingBox(BlockBox boundingBox);
+
+    @Accessor("boundingBox")
+    BlockBox getBoundingBox();
 }
