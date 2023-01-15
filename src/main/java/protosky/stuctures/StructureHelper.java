@@ -14,8 +14,7 @@ import net.minecraft.tag.FluidTags;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.*;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.Heightmap;
+import net.minecraft.world.*;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -29,8 +28,6 @@ import net.minecraft.util.math.random.RandomSeed;
 import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
@@ -63,8 +60,8 @@ public class StructureHelper {
     public static boolean ran = false;
     private static final List<Pair<Structure, ManyArgumentFunction<Boolean, StructurePiece, StructureWorldAccess, StructureAccessor, ChunkGenerator, Random, BlockBox, ChunkPos, BlockPos, Chunk>>> structures = new ArrayList<>();
 
-
-    private int oceanRuinYCalculator(BlockPos start, BlockView world, BlockPos end) {
+    //This different from method_14829 because it uses the heightmap instead of using the physical blocks that get deleted.
+    private static int oceanRuinYCalculator(BlockPos start, WorldAccess world, BlockPos end) {
         int yToMoveTo = start.getY();
         int initialY = start.getY() - 1;
 
@@ -72,22 +69,23 @@ public class StructureHelper {
         int bottomOfWorld = 0;
 
         for(BlockPos blockPos : BlockPos.iterate(start, end)) {
-            int x = blockPos.getX();
+            /*int x = blockPos.getX();
             int z = blockPos.getZ();
             int y = start.getY() - 1;
 
             BlockPos.Mutable blockToCheck = new BlockPos.Mutable(x, y, z);
-            BlockState blockState = world.getBlockState(blockToCheck);
+            BlockState blockState = world.getBlockState(blockToCheck);*/
 
             //Keep going down until we run into something that's not water, air, or ice.
-            for(FluidState fluidState = world.getFluidState(blockToCheck);
+            /*for(FluidState fluidState = world.getFluidState(blockToCheck);
                 (blockState.isAir() || fluidState.isIn(FluidTags.WATER) || blockState.isIn(BlockTags.ICE)) && y > world.getBottomY() + 1;
                 fluidState = world.getFluidState(blockToCheck)
             ) {
                 blockToCheck.set(x, --y, z);
                 blockState = world.getBlockState(blockToCheck);
-            }
+            }*/
 
+            int y = world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, blockPos.getX(), blockPos.getZ());
             lowestSpot = Math.min(lowestSpot, y);
 
             if (y < initialY - 2) {
@@ -212,14 +210,14 @@ public class StructureHelper {
                         return false;
                     })
             );
-            //FIX: Some structures don't work. See edit.txt
+            //FIX: Some structures don't work. See locations.txt
             structures.add(new MutablePair<>(
                     structureRegistry.get(Identifier.tryParse("shipwreck")),
+                    //This is looks different than the original, but all that happened to it is it was restructured and named.
                     (structurePiece, worldAccess, structureAccessor, chunkGenerator, random, chunkBox, chunkPos, pivot, chunk) -> {
                         SimpleStructurePieceInvoker simplePieceInvoker = ((SimpleStructurePieceInvoker) structurePiece);
                         ShipwreckGeneratorPieceInvoker iglooGeneratorPieceInvoker = ((ShipwreckGeneratorPieceInvoker) structurePiece);
                         StructurePieceInvoker pieceInvoker = (StructurePieceInvoker) structurePiece;
-
 
                         Heightmap.Type heightmap = iglooGeneratorPieceInvoker.getGrounded() ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
 
@@ -237,7 +235,7 @@ public class StructureHelper {
                             for (BlockPos bottomLayerBlock : BlockPos.iterate(simplePieceInvoker.getPos(), otherBottomCorner)) {
                                 minimumHeight = Math.min(minimumHeight, worldAccess.getTopY(heightmap, bottomLayerBlock.getX(), bottomLayerBlock.getZ()));
                             }
-                            YtoMoveTo = minimumHeight - size.getY() / 2;
+                             YtoMoveTo = minimumHeight - size.getY() / 2 - random.nextInt(3);
 
                         //Normal shipwrecks
                         } else {
@@ -266,6 +264,7 @@ public class StructureHelper {
             );
             structures.add(new MutablePair<>(
                     structureRegistry.get(Identifier.tryParse("ocean_ruin_cold")),
+                    //This is looks different than the original, but all that happened to it is it was restructured and named.
                     (structurePiece, worldAccess, structureAccessor, chunkGenerator, random, chunkBox, chunkPos, pivot, chunk) -> {
                         SimpleStructurePieceInvoker simplePieceInvoker = ((SimpleStructurePieceInvoker) structurePiece);
                         OceanRuinGeneratorPieceInvoker oceanRuinGeneratorPieceInvoker = ((OceanRuinGeneratorPieceInvoker) structurePiece);
@@ -288,8 +287,8 @@ public class StructureHelper {
                                         BlockPos.ORIGIN
                         ).add(simplePieceInvoker.getPos());
 
-                        yToMoveTo = oceanRuinGeneratorPieceInvoker.method_14829Invoker(simplePieceInvoker.getPos(), worldAccess, otherCorner);
-                        System.out.println(yToMoveTo);
+                        //yToMoveTo = oceanRuinGeneratorPieceInvoker.method_14829Invoker(simplePieceInvoker.getPos(), worldAccess, otherCorner);
+                        yToMoveTo = oceanRuinYCalculator(simplePieceInvoker.getPos(), worldAccess, otherCorner);
 
                         simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), yToMoveTo, simplePieceInvoker.getPos().getZ()));
                         simplePieceInvoker.getPlacementData().setBoundingBox(chunkBox);
