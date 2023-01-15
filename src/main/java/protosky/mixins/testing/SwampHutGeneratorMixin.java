@@ -33,10 +33,7 @@ public abstract class SwampHutGeneratorMixin {
         SwampHutGenerator This = ((SwampHutGenerator)(Object)this);
         ShiftableStructurePieceInvoker shiftableStructurePieceInvoker = ((ShiftableStructurePieceInvoker) This);
 
-        if (shiftableStructurePieceInvoker.invokeAdjustToAverageHeight(world, chunkBox, 0)) {
-            System.out.println("hi");
-        }
-
+        shiftableStructurePieceInvoker.invokeAdjustToAverageHeight(world, chunkBox, 0);
         ci.cancel();
     }
 }

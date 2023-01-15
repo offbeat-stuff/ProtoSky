@@ -1,10 +1,8 @@
 package protosky.testing;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryKeyArgumentType;

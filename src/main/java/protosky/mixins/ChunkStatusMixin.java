@@ -6,10 +6,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import protosky.WorldGenUtils;
 import protosky.stuctures.PillarHelper;
 import protosky.stuctures.StructureHelper;
-import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -76,12 +75,10 @@ public abstract class ChunkStatusMixin {
         ci.cancel();
     }
 
-    /*@Inject(method = "method_17033", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "method_17033", at = @At("HEAD"), cancellable = true)
     //This is under ChunkStatus SPAWN. To find the inject method you need to read the bytecode.
     //Spawning entities should be skipped here
     private static void SPAWN(ChunkStatus targetStatus, ServerWorld world, ChunkGenerator generator, List chunks, Chunk chunk, CallbackInfo ci) {
         ci.cancel();
     }
-    */
-
 }

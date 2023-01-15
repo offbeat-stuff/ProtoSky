@@ -60,6 +60,4 @@ jar {
     }
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/protosky.accesswidener")
-}
+loom {}

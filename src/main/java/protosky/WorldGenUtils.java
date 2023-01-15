@@ -15,20 +15,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.RandomSeed;
 import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
 import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.world.*;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.chunk.ReadableContainer;
-import protosky.stuctures.PillarHelper;
-import protosky.stuctures.StructureHelper;
+import net.minecraft.world.chunk.*;
 import protosky.mixins.ProtoChunkAccessor;
 
-import java.util.*;
-
-import static protosky.ProtoSkySettings.LOGGER;
+import java.util.Map;
+import java.util.Optional;
 
 public class WorldGenUtils
 {
@@ -66,7 +60,6 @@ public class WorldGenUtils
         } else {
             chunk.getEntities().removeIf(tag -> {
                 String id = tag.getString("id");
-                LOGGER.info(id);
                 return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker") && !id.equals("minecraft:item_frame");
             });
         }
