@@ -4,11 +4,17 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.loot.LootTables;
 import net.minecraft.structure.*;
+import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
+import net.minecraft.structure.processor.BlockRotStructureProcessor;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.*;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.Heightmap;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,11 +63,44 @@ public class StructureHelper {
     public static boolean ran = false;
     private static final List<Pair<Structure, ManyArgumentFunction<Boolean, StructurePiece, StructureWorldAccess, StructureAccessor, ChunkGenerator, Random, BlockBox, ChunkPos, BlockPos, Chunk>>> structures = new ArrayList<>();
 
-    private static BlockBox cloneBlockBox(BlockBox blockBox) {
-        return new BlockBox(blockBox.getMinX(), blockBox.getMinY(), blockBox.getMinZ(), blockBox.getMaxX(), blockBox.getMaxY(), blockBox.getMaxZ());
-    }
-    private static Vec3i calculateBlockBoxDelta(BlockBox old, BlockBox New) {
-        return new Vec3i(old.getMinX() - New.getMinX(), old.getMinY() - New.getMinY(), old.getMinZ() - New.getMinZ());
+
+    private int oceanRuinYCalculator(BlockPos start, BlockView world, BlockPos end) {
+        int yToMoveTo = start.getY();
+        int initialY = start.getY() - 1;
+
+        int lowestSpot = 512;
+        int bottomOfWorld = 0;
+
+        for(BlockPos blockPos : BlockPos.iterate(start, end)) {
+            int x = blockPos.getX();
+            int z = blockPos.getZ();
+            int y = start.getY() - 1;
+
+            BlockPos.Mutable blockToCheck = new BlockPos.Mutable(x, y, z);
+            BlockState blockState = world.getBlockState(blockToCheck);
+
+            //Keep going down until we run into something that's not water, air, or ice.
+            for(FluidState fluidState = world.getFluidState(blockToCheck);
+                (blockState.isAir() || fluidState.isIn(FluidTags.WATER) || blockState.isIn(BlockTags.ICE)) && y > world.getBottomY() + 1;
+                fluidState = world.getFluidState(blockToCheck)
+            ) {
+                blockToCheck.set(x, --y, z);
+                blockState = world.getBlockState(blockToCheck);
+            }
+
+            lowestSpot = Math.min(lowestSpot, y);
+
+            if (y < initialY - 2) {
+                bottomOfWorld++;
+            }
+        }
+
+        int p = Math.abs(start.getX() - end.getX());
+        if (initialY - lowestSpot > 2 && bottomOfWorld > p - 2) {
+            yToMoveTo = lowestSpot + 1;
+        }
+
+        return yToMoveTo;
     }
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
@@ -181,38 +220,39 @@ public class StructureHelper {
                         ShipwreckGeneratorPieceInvoker iglooGeneratorPieceInvoker = ((ShipwreckGeneratorPieceInvoker) structurePiece);
                         StructurePieceInvoker pieceInvoker = (StructurePieceInvoker) structurePiece;
 
-                        int topY = worldAccess.getTopY();
-                        int j = 0;
 
-                        Heightmap.Type hightmap = iglooGeneratorPieceInvoker.getGrounded() ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
+                        Heightmap.Type heightmap = iglooGeneratorPieceInvoker.getGrounded() ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
 
                         Vec3i size = simplePieceInvoker.getTemplate().getSize();
-                        int size2D = size.getX() * size.getZ();
+                        int area2D = size.getX() * size.getZ();
+                        int YtoMoveTo = 0;
 
-                        //If the shipwreck has no bounding box (why IDK) then put it at the heightmap
-                        if (size2D == 0) {
-                            j = worldAccess.getTopY(hightmap, simplePieceInvoker.getPos().getX(), simplePieceInvoker.getPos().getZ());
-
-                        //Normal occurrences
-                        } else {
+                        //Beached Shipwrecks
+                        if(iglooGeneratorPieceInvoker.getGrounded()) {
+                            //This moves it down to the minium height of the world heightmap.
+                            int minimumHeight = worldAccess.getTopY();
+                            //Run through the 2D locations of the structure and get the average of their heightmaps
                             BlockPos otherBottomCorner = simplePieceInvoker.getPos().add(size.getX() - 1, 0, size.getZ() - 1);
-
-                            //Run through all blocks on the lowest level the structure
-                            for(BlockPos bottomLayerBlock : BlockPos.iterate(simplePieceInvoker.getPos(), otherBottomCorner)) {
-                                //Get the height of the heightmap at the current block
-                                int bottomLayerBlockHeightmapY = worldAccess.getTopY(hightmap, bottomLayerBlock.getX(), bottomLayerBlock.getZ());
-                                j += bottomLayerBlockHeightmapY;
-                                topY = Math.min(topY, bottomLayerBlockHeightmapY);
+                            //Run through the 2D locations of the structure and get the average of their heightmaps
+                            for (BlockPos bottomLayerBlock : BlockPos.iterate(simplePieceInvoker.getPos(), otherBottomCorner)) {
+                                minimumHeight = Math.min(minimumHeight, worldAccess.getTopY(heightmap, bottomLayerBlock.getX(), bottomLayerBlock.getZ()));
                             }
+                            YtoMoveTo = minimumHeight - size.getY() / 2;
 
-                            j /= size2D;
+                        //Normal shipwrecks
+                        } else {
+                            //Basically this just averages all the heights of ocean floor heightmap and puts it there.
+                            int accumulatedHeight = 0;
+                            //Run through the 2D locations of the structure and get the average of their heightmaps
+                            BlockPos otherBottomCorner = simplePieceInvoker.getPos().add(size.getX() - 1, 0, size.getZ() - 1);
+                            //Run through the 2D locations of the structure and get the average of their heightmaps
+                            for (BlockPos bottomLayerBlock : BlockPos.iterate(simplePieceInvoker.getPos(), otherBottomCorner)) {
+                                accumulatedHeight += worldAccess.getTopY(heightmap, bottomLayerBlock.getX(), bottomLayerBlock.getZ());
+                            }
+                            YtoMoveTo = accumulatedHeight / area2D;
                         }
 
-                        System.out.println("j: " + j);
-                        int m = iglooGeneratorPieceInvoker.getGrounded() ? topY - size.getY() / 2 - random.nextInt(3) : j;
-                        System.out.println("m: " + m);
-
-                        simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), m, simplePieceInvoker.getPos().getZ()));
+                        simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), YtoMoveTo, simplePieceInvoker.getPos().getZ()));
                         //super.generate(world, structureAccessor, chunkGenerator, random, chunkBox, chunkPos, pivot);
                         simplePieceInvoker.getPlacementData().setBoundingBox(chunkBox);
                         pieceInvoker.setBoundingBox(simplePieceInvoker.getTemplate().calculateBoundingBox(simplePieceInvoker.getPlacementData(), simplePieceInvoker.getPos()));
@@ -231,16 +271,27 @@ public class StructureHelper {
                         OceanRuinGeneratorPieceInvoker oceanRuinGeneratorPieceInvoker = ((OceanRuinGeneratorPieceInvoker) structurePiece);
                         StructurePieceInvoker pieceInvoker = (StructurePieceInvoker) structurePiece;
 
+                        simplePieceInvoker.getPlacementData()
+                                .clearProcessors()
+                                .addProcessor(new BlockRotStructureProcessor(oceanRuinGeneratorPieceInvoker.getIntegrity()))
+                                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
+
+                        int yToMoveTo = 0;
+
                         int i = worldAccess.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, simplePieceInvoker.getPos().getX(), simplePieceInvoker.getPos().getZ());
                         simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), i, simplePieceInvoker.getPos().getZ()));
-                        BlockPos blockPos = StructureTemplate.transformAround(
+
+                        BlockPos otherCorner = StructureTemplate.transformAround(
                                         new BlockPos(simplePieceInvoker.getTemplate().getSize().getX() - 1, 0, simplePieceInvoker.getTemplate().getSize().getZ() - 1),
                                         BlockMirror.NONE,
                                         simplePieceInvoker.getPlacementData().getRotation(),
                                         BlockPos.ORIGIN
-                                )
-                                .add(simplePieceInvoker.getPos());
-                        simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), oceanRuinGeneratorPieceInvoker.method_14829Invoker(simplePieceInvoker.getPos(), worldAccess, blockPos), simplePieceInvoker.getPos().getZ()));
+                        ).add(simplePieceInvoker.getPos());
+
+                        yToMoveTo = oceanRuinGeneratorPieceInvoker.method_14829Invoker(simplePieceInvoker.getPos(), worldAccess, otherCorner);
+                        System.out.println(yToMoveTo);
+
+                        simplePieceInvoker.setPos(new BlockPos(simplePieceInvoker.getPos().getX(), yToMoveTo, simplePieceInvoker.getPos().getZ()));
                         simplePieceInvoker.getPlacementData().setBoundingBox(chunkBox);
                         pieceInvoker.setBoundingBox(simplePieceInvoker.getTemplate().calculateBoundingBox(simplePieceInvoker.getPlacementData(), simplePieceInvoker.getPos()));
                         return false;
