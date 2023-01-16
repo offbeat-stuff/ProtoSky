@@ -6,6 +6,10 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.structure.*;
 import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
 import net.minecraft.structure.processor.BlockRotStructureProcessor;
@@ -19,8 +23,6 @@ import net.minecraft.util.math.random.ChunkRandom;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.math.random.RandomSeed;
 import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.WorldAccess;
@@ -32,6 +34,7 @@ import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.util.PlacedFeatureIndexer;
 import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureType;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import protosky.mixins.StructureHelperInvokers.*;
@@ -93,7 +96,8 @@ public class StructureHelper {
 
     private static synchronized void fixRaceCondition(WorldAccess world) {
         if (!ran) {
-            Registry<Structure> structureRegistry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            //Registry<StructureType<?>> structureRegistry = Registries.STRUCTURE_TYPE;
+            Registry<Structure> structureRegistry = world.getRegistryManager().get(RegistryKeys.STRUCTURE);
 
             structures.clear();
             structures.add(new MutablePair<>(
@@ -351,7 +355,7 @@ public class StructureHelper {
             BlockPos blockPos = chunkSectionPos.getMinPos();
 
             //Get the structure registry
-            Registry<Structure> registry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            Registry<Structure> registry = world.getRegistryManager().get(RegistryKeys.STRUCTURE);
             Map<Integer, List<Structure>> map = registry.stream()
                     .collect(Collectors.groupingBy(structureType -> structureType.getFeatureGenerationStep().ordinal()));
 

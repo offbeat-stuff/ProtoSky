@@ -1,7 +1,7 @@
 package protosky.mixins.StructureHelperInvokers;
 
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.source.BiomeSource;

@@ -21,9 +21,6 @@
   "entrypoints": {
     "main": [
       "protosky.fixWorldLoads"
-    ],
-    "notentrypoints": [
-      "protosky.testing.findMovedStructure"
     ]
   },
   "mixins": [
