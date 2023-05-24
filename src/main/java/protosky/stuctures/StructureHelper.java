@@ -115,7 +115,7 @@ public class StructureHelper {
                             BlockState southFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.SOUTH);
                             BlockState eastFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.EAST);
                             BlockState westFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.WEST);
-                            BlockState lava = Blocks.LAVA.getDefaultState().with(LavaFluid.FALLING,false);
+                            BlockState lava = Blocks.LAVA.getDefaultState();
 
                             setBlockInStructure(structurePiece, chunk, northFrame, 4, 3, 8);
                             setBlockInStructure(structurePiece, chunk, northFrame, 5, 3, 8);
