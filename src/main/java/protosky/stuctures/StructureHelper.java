@@ -6,6 +6,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.fluid.LavaFluid;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
@@ -114,6 +115,7 @@ public class StructureHelper {
                             BlockState southFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.SOUTH);
                             BlockState eastFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.EAST);
                             BlockState westFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.WEST);
+                            BlockState lava = Blocks.LAVA.getDefaultState().with(LavaFluid.FALLING,false);
 
                             setBlockInStructure(structurePiece, chunk, northFrame, 4, 3, 8);
                             setBlockInStructure(structurePiece, chunk, northFrame, 5, 3, 8);
@@ -127,6 +129,7 @@ public class StructureHelper {
                             setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 9);
                             setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 10);
                             setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 11);
+                            setBlockInStructure(structurePiece, chunk, lava, 5, 1, 10);
                         }
                         return false;
                     })
