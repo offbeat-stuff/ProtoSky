@@ -28,6 +28,7 @@ public class WorldGenUtils
 {
     public static void deleteBlocks(ProtoChunk chunk, ServerWorld world)
     {
+        var pos = chunk.getPos();
         ChunkSection[] sections = chunk.getSectionArray();
         for (int i = 0; i < sections.length; i++) {
             ChunkSection chunkSection = sections[i];
@@ -35,6 +36,10 @@ public class WorldGenUtils
             ReadableContainer<RegistryEntry<Biome>> biomeContainer = chunkSection.getBiomeContainer();
             int chunkPos = chunkSection.getYOffset() >> 4;
             sections[i] = new ChunkSection(chunkPos, blockStateContainer, biomeContainer);
+        }
+        for (var block : BlockPos.iterate(pos.x * 16, chunk.getBottomY(), pos.z * 16, pos.x * 16 + 15,
+                chunk.getBottomY(), pos.z * 16 + 15)) {
+            chunk.setBlockState(block, Blocks.BEDROCK.getDefaultState(), false);
         }
         for (BlockPos bePos : chunk.getBlockEntityPositions()) {
             chunk.removeBlockEntity(bePos);
@@ -51,7 +56,6 @@ public class WorldGenUtils
             heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
         }
     }
-
 
     public static void clearEntities(ProtoChunk chunk, ServerWorld world) {
         // erase entities
