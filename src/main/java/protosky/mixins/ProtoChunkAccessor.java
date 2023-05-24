@@ -8,8 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.List;
 
 @Mixin(ProtoChunk.class)
-public interface ProtoChunkAccessor
-{
+public interface ProtoChunkAccessor {
     @Accessor("lightSources")
     List<BlockPos> getLightSources();
 }

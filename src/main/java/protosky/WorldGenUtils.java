@@ -2,12 +2,10 @@ package protosky;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.Blocks;import et.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.structure.StructureTemplate;
+import net.minecraft.client.MinecraftClient;import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructurePlacementDimport et.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -17,16 +15,10 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.RandomSeed;
 import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.world.*;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.chunk.ReadableContainer;
-import protosky.stuctures.PillarHelper;
-import protosky.stuctures.StructureHelper;
+import net.minecraft.world.chunk.*;
 import protosky.mixins.ProtoChunkAccessor;
 
 import java.util.*;
@@ -94,9 +86,7 @@ public class WorldGenUtils {
         } else {
             chunk.getEntities().removeIf(tag -> {
                 String id = tag.getString("id");
-                LOGGER.info(id);
-                return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker")
-                        && !id.equals("minecraft:item_frame");
+                return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker") && !id.equals("minecraft:item_frame");
             });
         }
     }

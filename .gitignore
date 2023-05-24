@@ -37,7 +37,8 @@ run/fabric-server-launcher.properties
 run/
 
 edit.txt
-src.zip
-notes.txt
-resetEndSpawn.sh
+moves1.19.3.txt
+checklist.txt
+resetServer.sh
+resetSingleplayer.sh
 startServer.sh

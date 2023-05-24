@@ -42,8 +42,6 @@ public class PillarHelper {
     }
 
     public static void generate(StructureWorldAccess world, ProtoChunk chunk) {
-
-
         int chunkX = chunk.getPos().x;
         int chunkZ = chunk.getPos().z;
         //-6 Chunks is 96 blocks, all pillars should be within this

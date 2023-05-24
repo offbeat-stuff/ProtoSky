@@ -7,13 +7,14 @@
     "EnderDragonFightMixin",
     "ProtoChunkAccessor",
     "StructurePieceAccessor",
-    "endCityParts.ChunkGeneratorMixin"
-  ],
-  "unused": [
-    "endCityParts.old_Unused.EndCityPieceAccessor",
-    "endCityParts.old_Unused.SimpleStructurePieceAccessor"
-  ],
-  "client": [
+    "StructureHelperInvokers.ChunkGeneratorInvoker",
+    "StructureHelperInvokers.IglooGeneratorPieceInvoker",
+    "StructureHelperInvokers.ShiftableStructurePieceInvoker",
+    "StructureHelperInvokers.ShipwreckGeneratorPieceInvoker",
+    "StructureHelperInvokers.SimpleStructurePieceInvoker",
+    "StructureHelperInvokers.StructurePieceInvoker",
+    "StructureHelperInvokers.StructureStartInvoker",
+    "StructureHelperInvokers.OceanRuinGeneratorPieceInvoker"
   ],
   "injectors": {
     "defaultRequire": 1
