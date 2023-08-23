@@ -44,7 +44,7 @@ public class WorldGenUtils
                 chunk.getBottomY(), pos.z * 16 + 15)) {
             chunk.setBlockState(bpos, Blocks.BEDROCK.getDefaultState(), false);
         }
-        chunk.setBlockState(new BlockPos(pos.x * 16, chunk.getBottomY() + 1, pos.z * 16), Blocks.REINFORCED_DEEPSLATE, false);
+        chunk.setBlockState(new BlockPos(pos.x * 16, chunk.getBottomY() + 1, pos.z * 16), Blocks.REINFORCED_DEEPSLATE.getDefaultState(), false);
 
         //This removes all the block entities
         for (BlockPos bePos : chunk.getBlockEntityPositions()) {

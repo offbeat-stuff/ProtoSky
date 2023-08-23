@@ -8,11 +8,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
-<<<<<<< HEAD
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.registry.Registries;
-=======
->>>>>>> e27ac3a6122c3ec6c9e85a71d70836f1fa7c3412
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -86,22 +81,6 @@ public class StructureHelper {
                             BlockState eastFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.EAST);
                             BlockState westFrame = Blocks.END_PORTAL_FRAME.getDefaultState().with(EndPortalFrameBlock.FACING, Direction.WEST);
                             BlockState lava = Blocks.LAVA.getDefaultState();
-
-<<<<<<< HEAD
-                            setBlockInStructure(structurePiece, chunk, northFrame, 4, 3, 8);
-                            setBlockInStructure(structurePiece, chunk, northFrame, 5, 3, 8);
-                            setBlockInStructure(structurePiece, chunk, northFrame, 6, 3, 8);
-                            setBlockInStructure(structurePiece, chunk, southFrame, 4, 3, 12);
-                            setBlockInStructure(structurePiece, chunk, southFrame, 5, 3, 12);
-                            setBlockInStructure(structurePiece, chunk, southFrame, 6, 3, 12);
-                            setBlockInStructure(structurePiece, chunk, eastFrame, 3, 3, 9);
-                            setBlockInStructure(structurePiece, chunk, eastFrame, 3, 3, 10);
-                            setBlockInStructure(structurePiece, chunk, eastFrame, 3, 3, 11);
-                            setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 9);
-                            setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 10);
-                            setBlockInStructure(structurePiece, chunk, westFrame, 7, 3, 11);
-                            setBlockInStructure(structurePiece, chunk, lava, 5, 1, 10);
-=======
                             boolean filled = true;
                             boolean[] frameHasEye = new boolean[12];
 
@@ -135,8 +114,7 @@ public class StructureHelper {
                                 setBlockInStructure(structurePiece, chunk, endPortal, 5, 3, 11);
                                 setBlockInStructure(structurePiece, chunk, endPortal, 6, 3, 11);
                             }
-                            
->>>>>>> e27ac3a6122c3ec6c9e85a71d70836f1fa7c3412
+                            setBlockInStructure(structurePiece, chunk, lava, 5, 1, 10);
                         }
                         return false;
                     })
