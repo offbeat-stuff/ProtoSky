@@ -28,15 +28,9 @@
   ],
 
   "depends": {
-<<<<<<< HEAD
-    "minecraft": ">=1.19.4",
-    "fabricloader": ">=0.14.21",
-    "fabric-api": "*",
-=======
     "minecraft": "^1.20",
     "fabricloader": ">=0.14.12",
     "fabric-api": ">=0.83.0+1.20",
->>>>>>> e27ac3a6122c3ec6c9e85a71d70836f1fa7c3412
     "java": ">=17"
   }
 }
