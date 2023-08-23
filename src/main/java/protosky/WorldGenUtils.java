@@ -40,10 +40,11 @@ public class WorldGenUtils
         }
         
         var pos = chunk.getPos();
-        for (var block : BlockPos.iterate(pos.x * 16, chunk.getBottomY(), pos.z * 16, pos.x * 16 + 15,
+        for (var bpos : BlockPos.iterate(pos.x * 16, chunk.getBottomY(), pos.z * 16, pos.x * 16 + 15,
                 chunk.getBottomY(), pos.z * 16 + 15)) {
-            chunk.setBlockState(block, Blocks.BEDROCK.getDefaultState(), false);
+            chunk.setBlockState(bpos, Blocks.BEDROCK.getDefaultState(), false);
         }
+        chunk.setBlockState(new BlockPos(pos.x * 16, chunk.getBottomY() + 1, pos.z * 16), Blocks.REINFORCED_DEEPSLATE, false);
 
         //This removes all the block entities
         for (BlockPos bePos : chunk.getBlockEntityPositions()) {
