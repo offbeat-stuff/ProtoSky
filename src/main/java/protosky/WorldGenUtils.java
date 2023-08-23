@@ -24,6 +24,8 @@ import protosky.mixins.ProtoChunkAccessor;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static protosky.ProtoSkySettings.LOGGER;
 
@@ -61,13 +63,11 @@ public class WorldGenUtils
     }
 
     public static void genHeightMaps(Chunk chunk) {
+
         // defined in Heightmap class constructor
-        int elementBits = MathHelper.ceilLog2(chunk.getHeight() + 1);
-        long[] emptyHeightmap = new PackedIntegerArray(elementBits, 256).getData();
-        for (Map.Entry<Heightmap.Type, Heightmap> heightmapEntry : chunk.getHeightmaps())
-        {
-            heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
-        }
+        // int elementBits = MathHelper.ceilLog2(chunk.getHeight() + 1);
+        // var emptyHeightmap = new PackedIntegerArray(elementBits, 256);
+        Heightmap.populateHeightmaps(chunk, chunk.getHeightmaps().stream().map(f -> f.getKey()).collect(Collectors.toSet()));
     }
 
     public static void clearEntities(ProtoChunk chunk, ServerWorld world) {
