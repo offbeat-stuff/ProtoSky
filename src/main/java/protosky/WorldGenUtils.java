@@ -52,6 +52,10 @@ public class WorldGenUtils
             return Blocks.SAND;
         }
 
+        if (biomeMatchesAt(biome, BiomeKeys.LUSH_CAVES)) {
+            return Blocks.MOSS_BLOCK;
+        }
+
         if (biomeMatchesAt(biome, BiomeKeys.WARPED_FOREST)) {
             return Blocks.WARPED_NYLIUM;
         }
