@@ -48,6 +48,10 @@ public class WorldGenUtils
             return Blocks.MYCELIUM;
         }
 
+        if (biomeMatchesAt(biome, BiomeKeys.DESERT)) {
+            return Blocks.SAND;
+        }
+
         if (biomeMatchesAt(biome, BiomeKeys.WARPED_FOREST)) {
             return Blocks.WARPED_NYLIUM;
         }
