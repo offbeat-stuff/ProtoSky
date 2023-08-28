@@ -21,6 +21,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.chunk.light.LightingProvider;
 import protosky.mixins.ProtoChunkAccessor;
+import net.minecraft.world.biome.BiomeKeys;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,28 @@ import static protosky.ProtoSkySettings.LOGGER;
 
 public class WorldGenUtils
 {
+    private static Block getBlockAt(ServerWorld world,BlockPos pos) {
+        if (world.getRegistryKey().equals(World.OVERWORLD)) {
+            if (world.getBiome(pos).equals(BiomeKeys.MUSHROOM_FIELDS)) {
+                return Blocks.MYCELIUM;
+            } else {
+                return Blocks.GRASS_BLOCK;
+            }
+        } else if (world.getRegistryKey().equals(World.NETHER)) {
+            var biome = world.getBiome(pos);
+            if (biome.equals(BiomeKeys.WARPED_FOREST)) {
+                return Blocks.WARPED_NYLIUM;
+            }
+            if (biome.equals(BiomeKeys.CRIMSON_FOREST)) {
+                return Blocks.CRIMSON_NYLIUM;
+            }
+            return Blocks.NETHERRACK;
+        } else if (world.getRegistryKey().equals(World.END)) {
+            return Blocks.END_STONE;
+        }
+        return Blocks.AIR;    
+    }
+    
     public static void deleteBlocks(Chunk chunk, ServerWorld world) {
         //This loops through all sections (16x16x16) sections of a chunk and copies over the biome information, but not the blocks.
         ChunkSection[] sections = chunk.getSectionArray();
@@ -42,11 +65,14 @@ public class WorldGenUtils
         }
         
         var pos = chunk.getPos();
-        for (var bpos : BlockPos.iterate(pos.x * 16, chunk.getBottomY(), pos.z * 16, pos.x * 16 + 15,
-                chunk.getBottomY(), pos.z * 16 + 15)) {
+        var px = pos.x * 16;
+        var pz = pos.z * 16;
+        for (var bpos : BlockPos.iterate(px, chunk.getBottomY(), pz,px + 15,
+                chunk.getBottomY(), pz + 15)) {
             chunk.setBlockState(bpos, Blocks.BEDROCK.getDefaultState(), false);
+            var bup = bpos.up();
+            chunk.setBlockState(bup, getBlockAt(world,bup).getDefaultState(), false);
         }
-        chunk.setBlockState(new BlockPos(pos.x * 16, chunk.getBottomY() + 1, pos.z * 16), Blocks.REINFORCED_DEEPSLATE.getDefaultState(), false);
 
         //This removes all the block entities
         for (BlockPos bePos : chunk.getBlockEntityPositions()) {

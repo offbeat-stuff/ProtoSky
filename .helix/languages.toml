@@ -1,0 +1,5 @@
+use-grammars = { only = [ "gradle","java" ] }
+
+[[language]]
+name = "java"
+language-server = { command = "jdtls"}
