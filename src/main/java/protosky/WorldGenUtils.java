@@ -3,12 +3,14 @@ package protosky;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.collection.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -32,26 +34,33 @@ import static protosky.ProtoSkySettings.LOGGER;
 
 public class WorldGenUtils
 {
-    private static Block getBlockAt(ServerWorld world,BlockPos pos) {
-        if (world.getRegistryKey().equals(World.OVERWORLD)) {
-            if (world.getBiome(pos).equals(BiomeKeys.MUSHROOM_FIELDS)) {
-                return Blocks.MYCELIUM;
-            } else {
-                return Blocks.GRASS_BLOCK;
-            }
-        } else if (world.getRegistryKey().equals(World.NETHER)) {
-            var biome = world.getBiome(pos);
-            if (biome.equals(BiomeKeys.WARPED_FOREST)) {
-                return Blocks.WARPED_NYLIUM;
-            }
-            if (biome.equals(BiomeKeys.CRIMSON_FOREST)) {
-                return Blocks.CRIMSON_NYLIUM;
-            }
-            return Blocks.NETHERRACK;
-        } else if (world.getRegistryKey().equals(World.END)) {
-            return Blocks.END_STONE;
+    private static boolean biomeMatchesAt(RegistryEntry<Biome> left,RegistryKey<Biome> right) {
+        var biomeAt = left.getKey();
+        if (biomeAt.isEmpty()) {
+            return false;
         }
-        return Blocks.AIR;    
+        return right.equals(biomeAt.get());
+    }
+
+    private static Block getBlockAt(ServerWorld world,BlockPos pos) {
+        var biome = world.getBiome(pos);
+        if (biomeMatchesAt(biome, BiomeKeys.MUSHROOM_FIELDS)) {
+            return Blocks.MYCELIUM;
+        }
+
+        if (biomeMatchesAt(biome, BiomeKeys.WARPED_FOREST)) {
+            return Blocks.WARPED_NYLIUM;
+        }
+
+        if (biomeMatchesAt(biome, BiomeKeys.CRIMSON_FOREST)) {
+            return Blocks.CRIMSON_NYLIUM;
+        }
+
+        if (world.getRegistryKey().equals(World.NETHER)) {
+            return Blocks.NETHERRACK;
+        }
+
+        return Blocks.GRASS_BLOCK; 
     }
     
     public static void deleteBlocks(Chunk chunk, ServerWorld world) {
@@ -69,6 +78,10 @@ public class WorldGenUtils
         var pz = pos.z * 16;
         for (var bpos : BlockPos.iterate(px, chunk.getBottomY(), pz,px + 15,
                 chunk.getBottomY(), pz + 15)) {
+            if (world.getRegistryKey().equals(World.END)) {
+                chunk.setBlockState(bpos, Blocks.END_STONE.getDefaultState(), false);
+                continue;
+            }
             chunk.setBlockState(bpos, Blocks.BEDROCK.getDefaultState(), false);
             var bup = bpos.up();
             chunk.setBlockState(bup, getBlockAt(world,bup).getDefaultState(), false);
